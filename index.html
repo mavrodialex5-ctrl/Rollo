@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rollo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a12;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+        }
+        #app {
+            max-width: 420px;
+            width: 100%;
+            background: #0e0e18;
+            border-radius: 32px;
+            padding: 20px 16px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            min-height: 95vh;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f5c842, #ff8a00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5c842, #ff8a00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #0a0a12;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .user-stars {
+            font-size: 13px;
+            font-weight: 600;
+            color: #f5c842;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .user-stars .star-icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            background: url('Star.png') no-repeat center/contain;
+        }
+        .user-stars span {
+            color: #888;
+            font-weight: 400;
+            font-size: 11px;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .header-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+        .header-btn:hover {
+            color: #f5c842;
+            background: rgba(245, 200, 66, 0.06);
+        }
+        .header-btn.admin {
+            font-size: 16px;
+        }
+        .banner {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .banner:hover {
+            border-color: rgba(245, 200, 66, 0.15);
+        }
+        .banner-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .banner-left .icon {
+            width: 22px;
+            height: 22px;
+            display: inline-block;
+            background: url('Star.png') no-repeat center/contain;
+        }
+        .banner-left .text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ddd;
+        }
+        .banner-left .sub {
+            font-size: 10px;
+            color: #666;
+            font-weight: 400;
+        }
+        .banner-right {
+            font-size: 20px;
+            color: #444;
+        }
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 14px 0 16px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 4px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .nav-tabs button {
+            padding: 10px 4px;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            color: #777;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.25s;
+            font-family: 'Inter', sans-serif;
+        }
+        .nav-tabs button:hover {
+            color: #ccc;
+        }
+        .nav-tabs button.active {
+            background: linear-gradient(135deg, #f5c842, #ff8a00);
+            color: #0a0a12;
+            box-shadow: 0 4px 20px rgba(245, 200, 66, 0.15);
+        }
+        .tab-content {
+            display: none;
+            animation: fadeUp 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        #nft-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        .nft-card {
+            background: #14141f;
+            border-radius: 16px;
+            padding: 12px 8px 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: 0.25s;
+            cursor: pointer;
+        }
+        .nft-card:hover {
+            border-color: rgba(245, 200, 66, 0.15);
+            transform: translateY(-2px);
+        }
+        .nft-image {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 10px;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 6px;
+            overflow: hidden;
+        }
+        .nft-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .nft-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #eee;
+            margin-bottom: 2px;
+        }
+        .nft-price {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f5c842;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .nft-price .star-icon {
+            width: 14px;
+            height: 14px;
+            display: inline-block;
+            background: url('Star.png') no-repeat center/contain;
+        }
+        .nft-stock {
+            font-size: 9px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .buy-btn {
+            width: 100%;
+            padding: 6px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+            background: linear-gradient(135deg, #f5c842, #ff8a00);
+        }
+        .buy-btn:hover {
+            transform: scale(1.03);
+            filter: brightness(1.1);
+        }
+        .buy-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        #crash-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        #crash-graph {
+            position: relative;
+            background: #0c0c18;
+            border-radius: 16px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            height: 260px;
+            overflow: hidden;
+        }
+        #crash-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 8px;
+        }
+        #crash-multiplier {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 60px #00ff88;
+            transition: color 0.2s;
+            pointer-events: none;
+        }
+        #crash-status {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            font-weight: 600;
+            color: #888;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        #crash-controls {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 10px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .bet-input {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 10px;
+        }
+        .bet-input label {
+            font-size: 10px;
+            color: #888;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        #bet-amount {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: #0a0a12;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            width: 100px;
+        }
+        .quick-bets {
+            display: flex;
+            gap: 3px;
+        }
+        .quick-bets button {
+            padding: 3px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            background: transparent;
+            color: #888;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .quick-bets button:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        #crash-bet-btn,
+        #crash-cashout-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            min-width: 100px;
+        }
+        #crash-bet-btn {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #0a0a12;
+        }
+        #crash-bet-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        #crash-cashout-btn {
+            background: linear-gradient(135deg, #ffd700, #ff2d55);
+            color: #fff;
+        }
+        #crash-cashout-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        #crash-history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .crash-history-item {
+            padding: 3px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .crash-history-item.win {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+        .crash-history-item.lose {
+            border-color: #ff2d55;
+            color: #ff2d55;
+        }
+        #profile-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 4px 0;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 18px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            flex-wrap: wrap;
+        }
+        .profile-avatar-large {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5c842, #ff8a00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0a0a12;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .profile-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-info h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .profile-info .username-label {
+            font-size: 12px;
+            color: #666;
+        }
+        .profile-balance {
+            font-size: 20px;
+            color: #f5c842;
+            font-weight: 700;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .profile-balance .star-icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            background: url('Star.png') no-repeat center/contain;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 8px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            display: block;
+            color: #f5c842;
+        }
+        .stat-label {
+            font-size: 9px;
+            color: #666;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .profile-inventory {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .profile-inventory h4 {
+            color: #888;
+            font-size: 13px;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+        #inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 8px;
+            max-height: 240px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .inventory-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 8px 4px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .inv-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin: 0 auto 4px;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            overflow: hidden;
+        }
+        .inv-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .inv-name {
+            font-size: 10px;
+            font-weight: 600;
+            color: #ccc;
+        }
+        .inv-price {
+            font-size: 10px;
+            color: #f5c842;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+        }
+        .inv-price .star-icon {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            background: url('Star.png') no-repeat center/contain;
+        }
+        .profile-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .profile-actions button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        #reset-profile-btn {
+            background: #ff2d55;
+            color: #fff;
+        }
+        #reset-profile-btn:hover {
+            transform: scale(1.03);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal.open {
+            display: flex;
+        }
+        .modal-content {
+            background: #14141f;
+            border-radius: 24px;
+            padding: 24px 20px 20px;
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+        .modal-content::-webkit-scrollbar {
+            width: 3px;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 10px;
+        }
+        .receipt {
+            background: #0a0a14;
+            border-radius: 14px;
+            padding: 18px;
+            border: 2px solid #f5c842;
+            margin: 10px 0;
+            position: relative;
+        }
+        .receipt::before {
+            content: '🧾 ЧЕК';
+            position: absolute;
+            top: -11px;
+            right: 16px;
+            background: #14141f;
+            padding: 0 10px;
+            font-size: 10px;
+            color: #f5c842;
+            font-weight: 700;
+        }
+        .receipt .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
+            font-size: 13px;
+        }
+        .receipt .row:last-child {
+            border-bottom: none;
+        }
+        .receipt .total {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f5c842;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 2px solid #f5c842;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .receipt .total .star-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            background: url('Star.png') no-repeat center/contain;
+        }
+        .receipt .nft-preview {
+            text-align: center;
+            margin: 6px 0;
+        }
+        .receipt .nft-preview img {
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
+            border: 2px solid #f5c842;
+            object-fit: cover;
+        }
+        .receipt .nft-preview .emoji-big {
+            font-size: 48px;
+            display: block;
+        }
+        .receipt .contact-line {
+            text-align: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #f5c842;
+            font-size: 14px;
+            font-weight: 600;
+            color: #f5c842;
+        }
+        .receipt .contact-line a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+        .modal-close-btn {
+            width: 100%;
+            padding: 10px 0;
+            margin-top: 14px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #888;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        .btn-confirm {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f5c842, #ff8a00);
+            color: #0a0a12;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-confirm:hover {
+            transform: scale(1.03);
+        }
+        .btn-cancel {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #888;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .topup-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 14px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .topup-input input {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: #0a0a12;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            width: 130px;
+            text-align: center;
+        }
+        #admin-panel {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: #0a0a12;
+            padding: 20px;
+            overflow-y: auto;
+            display: none;
+        }
+        #admin-panel.open {
+            display: block;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .admin-header h2 {
+            color: #f5c842;
+            font-size: 22px;
+            font-weight: 700;
+        }
+        #admin-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        #admin-close:hover {
+            color: #fff;
+        }
+        .admin-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .admin-tab {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            color: #888;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+        }
+        .admin-tab:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .admin-tab.active {
+            background: linear-gradient(135deg, #f5c842, #ff8a00);
+            color: #0a0a12;
+        }
+        .admin-tab-content {
+            display: none;
+        }
+        .admin-tab-content.active {
+            display: block;
+        }
+        .admin-nft-row {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 6px;
+        }
+        .admin-nft-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+        .admin-nft-fields input {
+            background: #0a0a12;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            padding: 4px 8px;
+            color: #fff;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            min-width: 40px;
+        }
+        .admin-nft-fields input:focus {
+            outline: 1px solid #f5c842;
+            border-color: transparent;
+        }
+        .admin-nft-fields .field-label {
+            font-size: 10px;
+            color: #666;
+        }
+        .admin-nft-fields .image-preview {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            overflow: hidden;
+        }
+        .admin-nft-fields .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .admin-save-btn {
+            margin-top: 12px;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            background: #00ff88;
+            color: #0a0a12;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .admin-save-btn:hover {
+            transform: scale(1.03);
+        }
+        .admin-user-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 4px;
+        }
+        .admin-user-row span {
+            font-size: 13px;
+        }
+        .admin-user-row .user-name {
+            font-weight: 600;
+            min-width: 60px;
+        }
+        .admin-user-row .user-bal {
+            color: #f5c842;
+            font-weight: 700;
+        }
+        .admin-user-row button {
+            padding: 3px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #fff;
+        }
+        .admin-user-row button:hover {
+            transform: scale(1.04);
+        }
+        .btn-add-stars {
+            background: #00d4ff;
+            color: #0a0a12 !important;
+        }
+        .btn-ban {
+            background: #ff2d55;
+        }
+        .btn-unban {
+            background: #00ff88;
+            color: #0a0a12 !important;
+        }
+        #admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        .stat-box {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 14px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            text-align: center;
+            font-size: 13px;
+        }
+        .stat-box .stat-number {
+            font-size: 26px;
+            font-weight: 800;
+            color: #f5c842;
+            display: block;
+        }
+        .admin-logs-list {
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        .log-item {
+            padding: 4px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 12px;
+            color: #888;
+        }
+        .log-item .highlight {
+            color: #f5c842;
+            font-weight: 600;
+        }
+        .admin-add-nft {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 12px;
+        }
+        .admin-add-nft .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+        .admin-add-nft input {
+            background: #0a0a12;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            padding: 6px 10px;
+            color: #fff;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+        .admin-add-nft input:focus {
+            outline: 1px solid #f5c842;
+            border-color: transparent;
+        }
+        .bottom-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 12px 0 4px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            margin-top: 16px;
+        }
+        .bottom-nav button {
+            background: none;
+            border: none;
+            color: #555;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 16px;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-family: 'Inter', sans-serif;
+        }
+        .bottom-nav button .icon {
+            font-size: 18px;
+        }
+        .bottom-nav button:hover {
+            color: #aaa;
+        }
+        .bottom-nav button.active {
+            color: #f5c842;
+        }
+        @media (max-width: 420px) {
+            #app {
+                padding: 14px 10px 8px;
+                border-radius: 24px;
+            }
+            .logo {
+                font-size: 17px;
+            }
+            .nav-tabs button {
+                font-size: 10px;
+                padding: 8px 2px;
+            }
+            .nft-card {
+                padding: 8px 4px;
+            }
+            .nft-image {
+                font-size: 24px;
+            }
+            .nft-name {
+                font-size: 9px;
+            }
+            .nft-price {
+                font-size: 11px;
+            }
+            .profile-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .stat-value {
+                font-size: 16px;
+            }
+            #crash-controls {
+                grid-template-columns: 1fr;
+            }
+            #crash-bet-btn,
+            #crash-cashout-btn {
+                width: 100%;
+            }
+            .bet-input {
+                justify-content: center;
+            }
+            #crash-multiplier {
+                font-size: 34px;
+            }
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            #inventory-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .banner-left .text {
+                font-size: 11px;
+            }
+            .banner-left .sub {
+                font-size: 9px;
+            }
+            .bottom-nav button {
+                font-size: 9px;
+                padding: 4px 12px;
+            }
+            .bottom-nav button .icon {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+
+        <div class="header">
+            <div class="logo">✦ Rollo</div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar" id="header-avatar">👤</div>
+                    <div class="user-stars">
+                        <span class="star-icon"></span>
+                        <span id="header-balance">0</span>
+                        <span>звёзд</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" id="add-balance-btn" title="Пополнить">+</button>
+                    <button class="header-btn admin" id="admin-btn" title="Админ-панель">⚙️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="banner" id="banner-topup">
+            <div class="banner-left">
+                <span class="icon"></span>
+                <div>
+                    <div class="text">Пополнить баланс</div>
+                    <div class="sub">Telegram Stars → игровые звёзды</div>
+                </div>
+            </div>
+            <div class="banner-right">›</div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="active" data-tab="nft">🖼️ NFT</button>
+            <button data-tab="crash">📈 КРАШ</button>
+            <button data-tab="profile">👤 ПРОФИЛЬ</button>
+        </div>
+
+        <section id="tab-nft" class="tab-content active">
+            <div id="nft-grid"></div>
+        </section>
+
+        <section id="tab-crash" class="tab-content">
+            <div id="crash-container">
+                <div id="crash-graph">
+                    <canvas id="crash-canvas"></canvas>
+                    <div id="crash-multiplier">1.00x</div>
+                    <div id="crash-status">ОЖИДАНИЕ СТАВКИ</div>
+                </div>
+                <div id="crash-controls">
+                    <div class="bet-input">
+                        <label>СТАВКА</label>
+                        <input type="number" id="bet-amount" value="10" min="1" step="1" />
+                        <div class="quick-bets">
+                            <button data-mult="2">x2</button>
+                            <button data-mult="5">x5</button>
+                            <button data-mult="10">x10</button>
+                            <button data-mult="all">ALL IN</button>
+                        </div>
+                    </div>
+                    <button id="crash-bet-btn">СДЕЛАТЬ СТАВКУ</button>
+                    <button id="crash-cashout-btn" disabled>ЗАБРАТЬ</button>
+                </div>
+                <div id="crash-history-list"></div>
+            </div>
+        </section>
+
+        <section id="tab-profile" class="tab-content">
+            <div id="profile-container">
+                <div class="profile-header">
+                    <div class="profile-avatar-large" id="profile-avatar-large">👤</div>
+                    <div class="profile-info">
+                        <h2 id="profile-username">Гость</h2>
+                        <div class="username-label" id="profile-username-label">@username</div>
+                        <div class="profile-balance" id="profile-balance">
+                            <span class="star-icon"></span> 0
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-card"><span class="stat-value" id="stat-purchases">0</span><span class="stat-label">Куплено</span></div>
+                    <div class="stat-card"><span class="stat-value" id="stat-wins">0</span><span class="stat-label">Побед</span></div>
+                    <div class="stat-card"><span class="stat-value" id="stat-losses">0</span><span class="stat-label">Поражений</span></div>
+                    <div class="stat-card"><span class="stat-value" id="stat-earned">0</span><span class="stat-label">Заработано</span></div>
+                </div>
+                <div class="profile-inventory">
+                    <h4>📦 Мои NFT</h4>
+                    <div id="inventory-grid"></div>
+                </div>
+                <div class="profile-actions">
+                    <button id="reset-profile-btn">🗑️ СБРОСИТЬ</button>
+                </div>
+            </div>
+        </section>
+
+        <div class="bottom-nav">
+            <button class="active"><span class="icon">🏠</span>Главная</button>
+        </div>
+
+        <!-- BUY MODAL -->
+        <div id="buy-modal" class="modal">
+            <div class="modal-content">
+                <h2 style="font-size:20px;text-align:center;margin-bottom:12px;">🖼️ Подтверждение покупки</h2>
+                <div id="buy-preview" style="text-align:center;margin:12px 0;">
+                    <div id="buy-image" style="font-size:48px;display:block;">🖼️</div>
+                    <div id="buy-name" style="font-size:18px;font-weight:700;margin-top:4px;">NFT Name</div>
+                    <div id="buy-price" style="font-size:16px;color:#f5c842;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;">
+                        <span class="star-icon" style="width:18px;height:18px;display:inline-block;background:url('Star.png') no-repeat center/contain;"></span> 100
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn-confirm" id="buy-confirm">✅ КУПИТЬ</button>
+                    <button class="btn-cancel" id="buy-cancel">✕ ОТМЕНА</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECEIPT MODAL -->
+        <div id="receipt-modal" class="modal">
+            <div class="modal-content">
+                <h2 style="font-size:20px;text-align:center;margin-bottom:12px;">🧾 ЧЕК О ПОКУПКЕ</h2>
+                <div class="receipt" id="receipt-content">
+                    <div class="nft-preview" id="receipt-preview"><span class="emoji-big">🖼️</span></div>
+                    <div class="row"><span>Название</span><span id="receipt-name">NFT Name</span></div>
+                    <div class="row"><span>Цена</span><span id="receipt-price" style="display:flex;align-items:center;gap:4px;"><span class="star-icon" style="width:14px;height:14px;display:inline-block;background:url('Star.png') no-repeat center/contain;"></span> 100</span></div>
+                    <div class="row"><span>Покупатель</span><span id="receipt-buyer">Игрок</span></div>
+                    <div class="row"><span>Дата</span><span id="receipt-date">--</span></div>
+                    <div class="row"><span>Статус</span><span style="color:#00ff88;">✅ ОПЛАЧЕНО</span></div>
+                    <div class="row total"><span>ИТОГО</span><span id="receipt-total" style="display:flex;align-items:center;gap:4px;"><span class="star-icon"></span> 100</span></div>
+                    <div class="contact-line">📩 Для получения подарка напишите <strong>@Fallensg</strong></div>
+                </div>
+                <button class="modal-close-btn" id="receipt-close">✕ ЗАКРЫТЬ</button>
+            </div>
+        </div>
+
+        <!-- TOP UP MODAL (реальное пополнение через Telegram Stars) -->
+        <div id="topup-modal" class="modal">
+            <div class="modal-content">
+                <h2 style="font-size:20px;text-align:center;margin-bottom:8px;">⭐ Пополнение баланса</h2>
+                <p style="color:#888;text-align:center;font-size:13px;">Выберите сумму в Telegram Stars</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:14px 0;">
+                    <button class="btn-confirm topup-preset" data-amount="50" style="font-size:14px;padding:10px;">50 ⭐</button>
+                    <button class="btn-confirm topup-preset" data-amount="100" style="font-size:14px;padding:10px;">100 ⭐</button>
+                    <button class="btn-confirm topup-preset" data-amount="250" style="font-size:14px;padding:10px;">250 ⭐</button>
+                    <button class="btn-confirm topup-preset" data-amount="500" style="font-size:14px;padding:10px;">500 ⭐</button>
+                    <button class="btn-confirm topup-preset" data-amount="1000" style="font-size:14px;padding:10px;">1000 ⭐</button>
+                    <button class="btn-confirm topup-preset" data-amount="2500" style="font-size:14px;padding:10px;">2500 ⭐</button>
+                </div>
+                <div class="topup-input">
+                    <input type="number" id="topup-amount" value="100" min="1" step="1" placeholder="Своя сумма" />
+                    <button class="btn-confirm" id="topup-confirm" style="margin:0;">ОПЛАТИТЬ</button>
+                </div>
+                <div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">
+                    Курс: 1 Telegram Star = <span id="conversion-rate-display">1</span> игровая звезда
+                </div>
+                <button class="modal-close-btn" id="topup-close">✕ ОТМЕНА</button>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL -->
+        <div id="admin-panel">
+            <div class="admin-header">
+                <h2>⚙️ АДМИН-ПАНЕЛЬ</h2>
+                <button id="admin-close">✕</button>
+            </div>
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="nft">🖼️ NFT</button>
+                <button class="admin-tab" data-tab="users">👤 Пользователи</button>
+                <button class="admin-tab" data-tab="stats">📊 Статистика</button>
+                <button class="admin-tab" data-tab="settings">⚙️ Настройки</button>
+                <button class="admin-tab" data-tab="logs">📝 Логи</button>
+            </div>
+            <div class="admin-content">
+                <div id="admin-nft-list" class="admin-tab-content active"></div>
+                <div id="admin-users-list" class="admin-tab-content"></div>
+                <div id="admin-stats" class="admin-tab-content"></div>
+                <div id="admin-settings" class="admin-tab-content">
+                    <h4 style="color:#888;margin-bottom:10px;font-size:13px;">⚙️ Настройки конвертации</h4>
+                    <div style="background:rgba(255,255,255,0.02);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);">
+                        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                            <span style="font-size:13px;color:#888;">1 Telegram Star =</span>
+                            <input type="number" id="conversion-rate" value="1" min="0.1" step="0.1" style="background:#0a0a12;border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:6px 10px;color:#fff;font-size:14px;width:80px;font-weight:700;">
+                            <span style="font-size:13px;color:#888;">игровых звёзд</span>
+                            <button id="save-conversion" style="background:#f5c842;color:#0a0a12;border:none;padding:6px 16px;border-radius:8px;font-weight:700;cursor:pointer;">Сохранить</button>
+                        </div>
+                        <div style="margin-top:8px;font-size:12px;color:#666;">
+                            Твой доход: <span id="profit-margin-display">0</span>% с каждого пополнения
+                        </div>
+                    </div>
+                </div>
+                <div id="admin-logs" class="admin-tab-content"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ================================================================
+        //  ROLLO — С РЕАЛЬНЫМ ПОПОЛНЕНИЕМ ЧЕРЕЗ TELEGRAM STARS
+        // ================================================================
+
+        class Rollo {
+            constructor() {
+                this.adminPassword = 'admin123';
+                this.users = this.loadUsers();
+                this.nfts = this.loadNFTs();
+                this.conversionRate = this.loadConversionRate();
+                this.crash = {
+                    active: false,
+                    multiplier: 1.00,
+                    betAmount: 0,
+                    crashPoint: 0,
+                    interval: null,
+                    isBetted: false
+                };
+                this.telegramUser = null;
+                this.init();
+            }
+
+            // ----- CONVERSION RATE -----
+            loadConversionRate() {
+                const saved = localStorage.getItem('rollo_conversion_rate');
+                return saved ? parseFloat(saved) : 1.0;
+            }
+
+            saveConversionRate(rate) {
+                localStorage.setItem('rollo_conversion_rate', String(rate));
+                this.conversionRate = rate;
+                document.getElementById('conversion-rate-display').textContent = rate;
+                const margin = ((rate - 1) / rate * 100).toFixed(1);
+                document.getElementById('profit-margin-display').textContent = margin;
+            }
+
+            // ----- TELEGRAM INIT -----
+            initTelegram() {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    const tg = window.Telegram.WebApp;
+                    tg.ready();
+                    const user = tg.initDataUnsafe?.user;
+                    if (user) {
+                        this.telegramUser = user;
+                        this.currentUser = 'tg_' + user.id;
+                        this.ensureUser(this.currentUser, user);
+                        this.updateUserUI(user);
+                    }
+                }
+                if (!this.telegramUser) {
+                    this.currentUser = 'default';
+                    this.ensureUser(this.currentUser, null);
+                    this.updateUserUI(null);
+                }
+            }
+
+            ensureUser(userId, tgUser) {
+                if (!this.users[userId]) {
+                    const username = tgUser ? (tgUser.username || tgUser.first_name || 'Гость') : 'Гость';
+                    const avatar = tgUser ? (tgUser.photo_url || '') : '';
+                    this.users[userId] = {
+                        username: username,
+                        avatar: avatar,
+                        balance: 0,
+                        purchases: 0,
+                        totalWins: 0,
+                        totalLosses: 0,
+                        totalEarned: 0,
+                        totalStarsSpent: 0,
+                        inventory: [],
+                        history: [],
+                        banned: false,
+                        tgId: tgUser ? tgUser.id : null
+                    };
+                    this.saveUsers();
+                }
+            }
+
+            getUser() {
+                return this.users[this.currentUser] || this.users['default'];
+            }
+
+            updateUserUI(tgUser) {
+                const user = this.getUser();
+                const name = tgUser ? (tgUser.username || tgUser.first_name || 'Гость') : user.username;
+                const avatar = tgUser ? (tgUser.photo_url || '') : user.avatar;
+
+                document.getElementById('profile-username').textContent = name;
+                document.getElementById('profile-username-label').textContent = tgUser ? '@' + (tgUser.username ||
+                    'username') : '@username';
+
+                const avatarEl = document.getElementById('header-avatar');
+                const avatarLarge = document.getElementById('profile-avatar-large');
+                if (avatar) {
+                    avatarEl.innerHTML = `<img src="${avatar}" alt="avatar">`;
+                    avatarLarge.innerHTML = `<img src="${avatar}" alt="avatar">`;
+                } else {
+                    const initial = name.charAt(0).toUpperCase();
+                    avatarEl.textContent = initial;
+                    avatarLarge.textContent = initial;
+                }
+                this.updateUI();
+            }
+
+            // ----- USERS -----
+            loadUsers() {
+                const saved = localStorage.getItem('rollo_users');
+                if (saved) {
+                    try { return JSON.parse(saved); } catch (_) {}
+                }
+                return {
+                    default: {
+                        username: 'Гость',
+                        avatar: '',
+                        balance: 0,
+                        purchases: 0,
+                        totalWins: 0,
+                        totalLosses: 0,
+                        totalEarned: 0,
+                        totalStarsSpent: 0,
+                        inventory: [],
+                        history: [],
+                        banned: false,
+                        tgId: null
+                    }
+                };
+            }
+
+            saveUsers() {
+                localStorage.setItem('rollo_users', JSON.stringify(this.users));
+            }
+
+            // ----- NFT -----
+            loadNFTs() {
+                const saved = localStorage.getItem('rollo_nfts');
+                if (saved) {
+                    try { return JSON.parse(saved); } catch (_) {}
+                }
+                return [{
+                    id: 'nft1',
+                    name: 'Космический дракон',
+                    image: '🐉',
+                    price: 100,
+                    stock: 10,
+                    createdAt: Date.now()
+                }, {
+                    id: 'nft2',
+                    name: 'Золотой феникс',
+                    image: '🔥',
+                    price: 250,
+                    stock: 5,
+                    createdAt: Date.now()
+                }, {
+                    id: 'nft3',
+                    name: 'Кристальный меч',
+                    image: '⚔️',
+                    price: 50,
+                    stock: 20,
+                    createdAt: Date.now()
+                }, {
+                    id: 'nft4',
+                    name: 'Лунный камень',
+                    image: '🌙',
+                    price: 75,
+                    stock: 15,
+                    createdAt: Date.now()
+                }, {
+                    id: 'nft5',
+                    name: 'Корона власти',
+                    image: '👑',
+                    price: 500,
+                    stock: 3,
+                    createdAt: Date.now()
+                }, {
+                    id: 'nft6',
+                    name: 'Крылья ангела',
+                    image: '😇',
+                    price: 350,
+                    stock: 7,
+                    createdAt: Date.now()
+                }];
+            }
+
+            saveNFTs() {
+                localStorage.setItem('rollo_nfts', JSON.stringify(this.nfts));
+            }
+
+            // ----- REAL TOP UP VIA TELEGRAM STARS -----
+            topUpWithStars(amount) {
+                const user = this.getUser();
+                if (user.banned) { alert('⛔ Аккаунт заблокирован!'); return; }
+
+                // Конвертация: Telegram Stars → игровые звёзды
+                const gameStars = Math.floor(amount * this.conversionRate);
+
+                if (window.Telegram && window.Telegram.WebApp) {
+                    const tg = window.Telegram.WebApp;
+
+                    // Создаём платёж через Telegram Stars
+                    tg.openInvoice({
+                        title: 'Пополнение баланса Rollo',
+                        description: `${amount} Telegram Stars → ${gameStars} игровых звёзд`,
+                        payload: JSON.stringify({
+                            type: 'stars_topup',
+                            amount: amount,
+                            gameStars: gameStars,
+                            userId: this.currentUser
+                        }),
+                        provider_token: '', // для Stars оставляем пустым
+                        currency: 'XTR', // XTR = Telegram Stars
+                        prices: [{ label: `${amount} ⭐ Telegram Stars`, amount: amount * 100 }] // сумма в копейках
+                    });
+
+                    // Обработка результата платежа
+                    tg.onEvent('invoiceClosed', (data) => {
+                        if (data.status === 'paid') {
+                            try {
+                                const payload = JSON.parse(data.payload);
+                                if (payload.userId === this.currentUser) {
+                                    // Зачисляем игровые звёзды
+                                    user.balance += payload.gameStars;
+                                    user.totalStarsSpent += payload.amount;
+                                    user.history.unshift({
+                                        type: 'topup',
+                                        telegramStars: payload.amount,
+                                        gameStars: payload.gameStars,
+                                        timestamp: new Date().toISOString()
+                                    });
+                                    this.saveUsers();
+                                    this.updateUI();
+                                    alert(`✅ Баланс пополнен на ${payload.gameStars} игровых звёзд!`);
+                                }
+                            } catch (e) {
+                                console.error('Ошибка обработки платежа:', e);
+                            }
+                        } else {
+                            alert('❌ Платёж отменён');
+                        }
+                    });
+                } else {
+                    // Для теста вне Telegram
+                    if (confirm(`🔬 ДЕМО-РЕЖИМ: пополнить на ${gameStars} звёзд?`)) {
+                        user.balance += gameStars;
+                        user.totalStarsSpent += amount;
+                        user.history.unshift({
+                            type: 'topup',
+                            telegramStars: amount,
+                            gameStars: gameStars,
+                            timestamp: new Date().toISOString(),
+                            demo: true
+                        });
+                        this.saveUsers();
+                        this.updateUI();
+                        alert(`✅ Баланс пополнен на ${gameStars} игровых звёзд! (ДЕМО)`);
+                    }
+                }
+            }
+
+            // ----- BUY NFT -----
+            buyNFT(nftId) {
+                const nft = this.nfts.find(n => n.id === nftId);
+                if (!nft) { alert('NFT не найден!'); return; }
+                const user = this.getUser();
+                if (user.banned) { alert('⛔ Аккаунт заблокирован!'); return; }
+                if (nft.stock <= 0) { alert('❌ Нет в наличии!'); return; }
+                if (user.balance < nft.price) {
+                    alert(`❌ Недостаточно звёзд! Нужно ${nft.price} ⭐`);
+                    return;
+                }
+
+                user.balance -= nft.price;
+                user.purchases += 1;
+                user.totalEarned += nft.price;
+                nft.stock -= 1;
+
+                const purchased = { ...nft, purchasedAt: Date.now() };
+                user.inventory.push(purchased);
+
+                user.history.unshift({
+                    type: 'purchase',
+                    nftName: nft.name,
+                    price: nft.price,
+                    timestamp: new Date().toISOString()
+                });
+
+                this.saveUsers();
+                this.saveNFTs();
+                this.showReceipt(nft, user);
+                this.updateUI();
+                this.renderNFTs();
+            }
+
+            showReceipt(nft, user) {
+                const modal = document.getElementById('receipt-modal');
+                const preview = document.getElementById('receipt-preview');
+                if (nft.image && (nft.image.startsWith('http') || nft.image.startsWith('data:'))) {
+                    preview.innerHTML =
+                        `<img src="${nft.image}" alt="${nft.name}" style="width:64px;height:64px;border-radius:10px;border:2px solid #f5c842;object-fit:cover;">`;
+                } else {
+                    preview.innerHTML = `<span class="emoji-big">${nft.image || '🖼️'}</span>`;
+                }
+                document.getElementById('receipt-name').textContent = nft.name;
+                document.getElementById('receipt-price').innerHTML =
+                    `<span class="star-icon" style="width:14px;height:14px;display:inline-block;background:url('Star.png') no-repeat center/contain;"></span> ${nft.price}`;
+                document.getElementById('receipt-buyer').textContent = user.username;
+                document.getElementById('receipt-date').textContent = new Date().toLocaleString();
+                document.getElementById('receipt-total').innerHTML =
+                    `<span class="star-icon" style="width:18px;height:18px;display:inline-block;background:url('Star.png') no-repeat center/contain;"></span> ${nft.price}`;
+                modal.classList.add('open');
+                document.getElementById('receipt-close').onclick = () => modal.classList.remove('open');
+                modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('open'); };
+            }
+
+            // ----- RENDER NFT -----
+            renderNFTs() {
+                const grid = document.getElementById('nft-grid');
+                grid.innerHTML = '';
+                for (const nft of this.nfts) {
+                    const isImage = nft.image && (nft.image.startsWith('http') || nft.image.startsWith('data:'));
+                    const card = document.createElement('div');
+                    card.className = 'nft-card';
+                    card.innerHTML = `
+                        <div class="nft-image">${isImage ? `<img src="${nft.image}" alt="${nft.name}">` : nft.image || '🖼️'}</div>
+                        <div class="nft-name">${nft.name}</div>
+                        <div class="nft-price"><span class="star-icon" style="width:14px;height:14px;display:inline-block;background:url('Star.png') no-repeat center/contain;"></span> ${nft.price}</div>
+                        <div class="nft-stock">${nft.stock} шт.</div>
+                        <button class="buy-btn" data-id="${nft.id}" ${nft.stock <= 0 ? 'disabled' : ''}>${nft.stock <= 0 ? '❌ НЕТ' : 'КУПИТЬ'}</button>
+                    `;
+                    grid.appendChild(card);
+                }
+                document.querySelectorAll('.buy-btn:not([disabled])').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.dataset.id;
+                        this.showBuyModal(id);
+                    });
+                });
+            }
+
+            showBuyModal(nftId) {
+                const nft = this.nfts.find(n => n.id === nftId);
+                if (!nft) return;
+                const modal = document.getElementById('buy-modal');
+                const preview = document.getElementById('buy-image');
+                if (nft.image && (nft.image.startsWith('http') || nft.image.startsWith('data:'))) {
+                    preview.innerHTML =
+                    `<img src="${nft.image}" style="width:60px;height:60px;border-radius:8px;object-fit:cover;">`;
+                } else {
+                    preview.textContent = nft.image || '🖼️';
+                }
+                document.getElementById('buy-name').textContent = nft.name;
+                document.getElementById('buy-price').innerHTML =
+                    `<span class="star-icon" style="width:18px;height:18px;display:inline-block;background:url('Star.png') no-repeat center/contain;"></span> ${nft.price}`;
+                modal.classList.add('open');
+                document.getElementById('buy-confirm').onclick = () => {
+                    modal.classList.remove('open');
+                    this.buyNFT(nftId);
+                };
+                document.getElementById('buy-cancel').onclick = () => modal.classList.remove('open');
+                modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('open'); };
+            }
+
+            // ----- TOP UP MODAL -----
+            showTopUpModal() {
+                const modal = document.getElementById('topup-modal');
+                document.getElementById('conversion-rate-display').textContent = this.conversionRate;
+                modal.classList.add('open');
+
+                // Предустановленные суммы
+                document.querySelectorAll('.topup-preset').forEach(btn => {
+                    btn.onclick = () => {
+                        const amount = parseInt(btn.dataset.amount);
+                        document.getElementById('topup-amount').value = amount;
+                    };
+                });
+
+                document.getElementById('topup-confirm').onclick = () => {
+                    const amount = parseInt(document.getElementById('topup-amount').value);
+                    if (isNaN(amount) || amount <= 0) {
+                        alert('Введите корректную сумму!');
+                        return;
+                    }
+                    modal.classList.remove('open');
+                    this.topUpWithStars(amount);
+                };
+                document.getElementById('topup-close').onclick = () => modal.classList.remove('open');
+                modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('open'); };
+            }
+
+            // ----- CRASH -----
+            generateCrashPoint() {
+                const r = Math.random();
+                const point = 1.00 / (1.00 - r * 0.90);
+                return Math.min(Math.max(point, 1.01), 8.00);
+            }
+
+            startCrashRound() {
+                if (this.crash.isBetted) return;
+                const bet = parseFloat(document.getElementById('bet-amount').value);
+                if (isNaN(bet) || bet <= 0) { alert('Введите сумму!'); return; }
+                const user = this.getUser();
+                if (bet > user.balance) { alert('❌ Недостаточно средств!'); return; }
+                if (user.banned) { alert('⛔ Аккаунт заблокирован!'); return; }
+
+                this.crash.isBetted = true;
+                this.crash.betAmount = bet;
+                this.crash.multiplier = 1.00;
+                this.crash.crashPoint = this.generateCrashPoint();
+
+                user.balance -= bet;
+                document.getElementById('crash-bet-btn').disabled = true;
+                document.getElementById('crash-cashout-btn').disabled = false;
+                document.getElementById('crash-status').textContent = '📈 РАСТЁТ...';
+                document.getElementById('crash-status').style.color = '#00ff88';
+
+                this.saveUsers();
+                this.animateCrash();
+            }
+
+            animateCrash() {
+                const multiplierEl = document.getElementById('crash-multiplier');
+                this.crash.interval = setInterval(() => {
+                    const inc = 0.005 + Math.random() * 0.025;
+                    this.crash.multiplier += inc;
+                    multiplierEl.textContent = this.crash.multiplier.toFixed(2) + 'x';
+                    this.drawCrashGraph();
+                    if (this.crash.multiplier >= this.crash.crashPoint) {
+                        this.crashCrash();
+                    }
+                }, 100);
+            }
+
+            crashCrash() {
+                clearInterval(this.crash.interval);
+                this.crash.isBetted = false;
+                const user = this.getUser();
+                document.getElementById('crash-cashout-btn').disabled = true;
+                document.getElementById('crash-status').textContent = '💥 КРАШ!';
+                document.getElementById('crash-status').style.color = '#ff2d55';
+                document.getElementById('crash-multiplier').style.color = '#ff2d55';
+                user.totalLosses++;
+                user.history.unshift({
+                    type: 'crash',
+                    result: 'lose',
+                    multiplier: this.crash.multiplier.toFixed(2),
+                    bet: this.crash.betAmount,
+                    timestamp: new Date().toISOString()
+                });
+                this.saveUsers();
+                this.updateUI();
+                setTimeout(() => this.resetCrashUI(), 2800);
+            }
+
+            cashOutCrash() {
+                if (!this.crash.isBetted) return;
+                clearInterval(this.crash.interval);
+                const user = this.getUser();
+                const winAmount = Math.round(this.crash.betAmount * this.crash.multiplier);
+                user.balance += winAmount;
+                user.totalEarned += winAmount;
+                user.totalWins++;
+                document.getElementById('crash-cashout-btn').disabled = true;
+                document.getElementById('crash-status').textContent = '✅ ЗАБРАНО!';
+                document.getElementById('crash-status').style.color = '#00ff88';
+                user.history.unshift({
+                    type: 'crash',
+                    result: 'win',
+                    multiplier: this.crash.multiplier.toFixed(2),
+                    bet: this.crash.betAmount,
+                    win: winAmount,
+                    timestamp: new Date().toISOString()
+                });
+                this.crash.isBetted = false;
+                this.saveUsers();
+                this.updateUI();
+                setTimeout(() => this.resetCrashUI(), 1800);
+            }
+
+            resetCrashUI() {
+                this.crash.multiplier = 1.00;
+                document.getElementById('crash-multiplier').textContent = '1.00x';
+                document.getElementById('crash-multiplier').style.color = '#ffffff';
+                document.getElementById('crash-status').textContent = 'ОЖИДАНИЕ СТАВКИ';
+                document.getElementById('crash-status').style.color = '#888';
+                document.getElementById('crash-bet-btn').disabled = false;
+                document.getElementById('crash-cashout-btn').disabled = true;
+                this.drawCrashGraph();
+            }
+
+            drawCrashGraph() {
+                const canvas = document.getElementById('crash-canvas');
+                if (!canvas) return;
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const dpr = window.devicePixelRatio || 1;
+                const w = canvas.width = (rect.width - 24) * dpr;
+                const h = canvas.height = (rect.height - 24) * dpr;
+                canvas.style.width = (rect.width - 24) + 'px';
+                canvas.style.height = (rect.height - 24) + 'px';
+                const ctx = canvas.getContext('2d');
+                ctx.scale(dpr, dpr);
+                const W = canvas.width / dpr;
+                const H = canvas.height / dpr;
+                ctx.clearRect(0, 0, W, H);
+                ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+                ctx.lineWidth = 0.5;
+                for (let i = 0; i < 10; i++) {
+                    const x = (i / 10) * W,
+                        y = (i / 10) * H;
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, H);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(W, y);
+                    ctx.stroke();
+                }
+                const maxM = Math.max(this.crash.multiplier, 1.5);
+                const points = 60;
+                ctx.beginPath();
+                ctx.strokeStyle = '#00ff88';
+                ctx.lineWidth = 2.5;
+                ctx.shadowColor = '#00ff88';
+                ctx.shadowBlur = 12;
+                for (let i = 0; i < points; i++) {
+                    const t = i / points;
+                    const x = t * W;
+                    const val = 1 + (maxM - 1) * Math.pow(t, 1.4);
+                    const y = H - (val / 3.5) * H;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                const cx = W * 0.75,
+                    cVal = this.crash.multiplier,
+                    cy = H - (cVal / 3.5) * H;
+                ctx.shadowBlur = 25;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#00ff88';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // ----- INVENTORY -----
+            renderInventory() {
+                const grid = document.getElementById('inventory-grid');
+                if (!grid) return;
+                const user = this.getUser();
+                grid.innerHTML = '';
+                if (!user.inventory || user.inventory.length === 0) {
+                    grid.innerHTML =
+                        '<p style="color:#666;grid-column:1/-1;text-align:center;padding:16px 0;font-size:12px;">У вас нет NFT</p>';
+                    return;
+                }
+                user.inventory.forEach((item) => {
+                    const isImage = item.image && (item.image.startsWith('http') || item.image.startsWith(
+                    'data:'));
+                    const card = document.createElement('div');
+                    card.className = 'inventory-item';
+                    card.innerHTML = `
+                        <div class="inv-image">${isImage ? `<img src="${item.image}">` : item.image || '🖼️'}</div>
+                        <div class="inv-name">${item.name}</div>
+                        <div class="inv-price"><span class="star-icon" style="width:12px;height:12px;display:inline-block;background:url('Star.png') no-repeat center/contain;"></span> ${item.price}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            // ----- UI UPDATE -----
+            updateUI() {
+                const user = this.getUser();
+                document.getElementById('header-balance').textContent = user.balance;
+                document.getElementById('profile-balance').innerHTML =
+                    `<span class="star-icon" style="width:20px;height:20px;display:inline-block;background:url('Star.png') no-repeat center/contain;"></span> ${user.balance}`;
+                document.getElementById('stat-purchases').textContent = user.purchases || 0;
+                document.getElementById('stat-wins').textContent = user.totalWins || 0;
+                document.getElementById('stat-losses').textContent = user.totalLosses || 0;
+                document.getElementById('stat-earned').textContent = user.totalEarned || 0;
+
+                const crashList = document.getElementById('crash-history-list');
+                if (crashList) {
+                    const ch = user.history.filter(h => h.type === 'crash').slice(0, 15);
+                    crashList.innerHTML = ch.map(item =>
+                        `<div class="crash-history-item ${item.result}">
+                            ${item.result === 'win' ? '✅' : '❌'} ${item.multiplier}x | ${item.bet}⭐
+                            ${item.win ? ' → +' + item.win + '⭐' : ''}
+                        </div>`
+                    ).join('');
+                }
+                this.renderInventory();
+                if (document.getElementById('admin-panel').classList.contains('open')) {
+                    this.renderAdminStats();
+                    this.renderAdminUsers();
+                    this.renderAdminLogs();
+                    this.renderAdminSettings();
+                }
+            }
+
+            // ----- ADMIN -----
+            toggleAdmin() {
+                const panel = document.getElementById('admin-panel');
+                if (panel.classList.contains('open')) {
+                    panel.classList.remove('open');
+                    return;
+                }
+                const pwd = prompt('Введите пароль администратора:');
+                if (pwd === this.adminPassword) {
+                    panel.classList.add('open');
+                    this.renderAdminNFTs();
+                    this.renderAdminUsers();
+                    this.renderAdminStats();
+                    this.renderAdminSettings();
+                    this.renderAdminLogs();
+                } else if (pwd !== null) {
+                    alert('❌ Неверный пароль!');
+                }
+            }
+
+            renderAdminSettings() {
+                const rateInput = document.getElementById('conversion-rate');
+                if (rateInput) {
+                    rateInput.value = this.conversionRate;
+                    document.getElementById('conversion-rate-display').textContent = this.conversionRate;
+                    const margin = ((this.conversionRate - 1) / this.conversionRate * 100).toFixed(1);
+                    document.getElementById('profit-margin-display').textContent = margin;
+                }
+                document.getElementById('save-conversion').onclick = () => {
+                    const rate = parseFloat(document.getElementById('conversion-rate').value);
+                    if (isNaN(rate) || rate <= 0) {
+                        alert('Введите корректное значение!');
+                        return;
+                    }
+                    this.saveConversionRate(rate);
+                    alert('✅ Курс сохранён!');
+                };
+            }
+
+            renderAdminNFTs() {
+                const container = document.getElementById('admin-nft-list');
+                container.innerHTML = `
+                    <h4 style="color:#888;margin-bottom:10px;font-size:13px;">🖼️ Управление NFT</h4>
+                    <div class="admin-add-nft">
+                        <div style="font-size:11px;color:#888;margin-bottom:6px;">➕ Добавить новый NFT</div>
+                        <div class="row">
+                            <input type="text" id="new-nft-name" placeholder="Название" style="flex:1;min-width:80px;">
+                            <input type="text" id="new-nft-image" placeholder="Эмодзи или ссылка" style="flex:1;min-width:100px;">
+                            <input type="number" id="new-nft-price" placeholder="Цена" style="width:70px;">
+                            <input type="number" id="new-nft-stock" placeholder="Кол-во" style="width:60px;" value="10">
+                            <button onclick="game.addNFT()" style="background:linear-gradient(135deg,#f5c842,#ff8a00);color:#0a0a12;border:none;padding:6px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px;">➕</button>
+                        </div>
+                    </div>
+                `;
+                for (const nft of this.nfts) {
+                    const isImage = nft.image && (nft.image.startsWith('http') || nft.image.startsWith('data:'));
+                    const row = document.createElement('div');
+                    row.className = 'admin-nft-row';
+                    row.innerHTML = `
+                        <div class="admin-nft-fields">
+                            <div class="image-preview">${isImage ? `<img src="${nft.image}">` : nft.image || '🖼️'}</div>
+                            <input type="text" value="${nft.name}" data-field="name" data-id="${nft.id}" style="min-width:80px;">
+                            <input type="text" value="${nft.image}" data-field="image" data-id="${nft.id}" style="min-width:80px;">
+                            <input type="number" value="${nft.price}" data-field="price" data-id="${nft.id}" style="width:60px;">
+                            <input type="number" value="${nft.stock}" data-field="stock" data-id="${nft.id}" style="width:60px;">
+                            <button onclick="game.deleteNFT('${nft.id}')" style="background:#ff2d55;color:#fff;border:none;padding:2px 10px;border-radius:6px;cursor:pointer;font-size:11px;">🗑️</button>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                }
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'admin-save-btn';
+                saveBtn.textContent = '💾 СОХРАНИТЬ ВСЕ NFT';
+                saveBtn.onclick = () => {
+                    document.querySelectorAll('#admin-nft-list .admin-nft-fields input[data-field]').forEach(inp => {
+                        const id = inp.dataset.id;
+                        const field = inp.dataset.field;
+                        let val = inp.type === 'number' ? parseFloat(inp.value) : inp.value;
+                        const nft = this.nfts.find(n => n.id === id);
+                        if (nft) nft[field] = val;
+                    });
+                    this.saveNFTs();
+                    this.renderNFTs();
+                    alert('✅ NFT сохранены!');
+                };
+                container.appendChild(saveBtn);
+            }
+
+            addNFT() {
+                const name = document.getElementById('new-nft-name').value.trim();
+                const image = document.getElementById('new-nft-image').value.trim();
+                const price = parseFloat(document.getElementById('new-nft-price').value);
+                const stock = parseInt(document.getElementById('new-nft-stock').value) || 10;
+                if (!name || !image || isNaN(price) || price <= 0) {
+                    alert('❌ Заполните все поля!');
+                    return;
+                }
+                const newNFT = {
+                    id: 'nft_' + Date.now(),
+                    name: name,
+                    image: image,
+                    price: price,
+                    stock: stock,
+                    createdAt: Date.now()
+                };
+                this.nfts.push(newNFT);
+                this.saveNFTs();
+                this.renderNFTs();
+                this.renderAdminNFTs();
+                alert('✅ NFT добавлен!');
+            }
+
+            deleteNFT(id) {
+                if (confirm('Удалить этот NFT?')) {
+                    this.nfts = this.nfts.filter(n => n.id !== id);
+                    this.saveNFTs();
+                    this.renderNFTs();
+                    this.renderAdminNFTs();
+                }
+            }
+
+            renderAdminUsers() {
+                const container = document.getElementById('admin-users-list');
+                container.innerHTML = '<h4 style="color:#888;margin-bottom:10px;font-size:13px;">👤 Пользователи</h4>';
+                for (const [id, user] of Object.entries(this.users)) {
+                    const row = document.createElement('div');
+                    row.className = 'admin-user-row';
+                    row.innerHTML = `
+                        <span class="user-name">${user.username}</span>
+                        <span class="user-bal">⭐ ${user.balance}</span>
+                        <span>Куплено: ${user.purchases || 0}</span>
+                        <span>Заработано: ${user.totalEarned || 0}</span>
+                        <span>Потрачено Stars: ${user.totalStarsSpent || 0}</span>
+                        <button class="btn-add-stars" data-user="${id}">+100</button>
+                        <button class="${user.banned ? 'btn-unban' : 'btn-ban'}" data-user="${id}">${user.banned ? '🔓' : '🔒'}</button>
+                    `;
+                    container.appendChild(row);
+                }
+                container.querySelectorAll('.btn-add-stars').forEach(btn => {
+                    btn.onclick = () => {
+                        const uid = btn.dataset.user;
+                        const amount = parseInt(prompt('Сколько звёзд добавить?', '100'));
+                        if (isNaN(amount) || amount <= 0) return;
+                        this.users[uid].balance += amount;
+                        this.saveUsers();
+                        this.renderAdminUsers();
+                        this.updateUI();
+                    };
+                });
+                container.querySelectorAll('.btn-ban, .btn-unban').forEach(btn => {
+                    btn.onclick = () => {
+                        const uid = btn.dataset.user;
+                        this.users[uid].banned = !this.users[uid].banned;
+                        this.saveUsers();
+                        this.renderAdminUsers();
+                        this.updateUI();
+                    };
+                });
+            }
+
+            renderAdminStats() {
+                const container = document.getElementById('admin-stats');
+                let totalPurchases = 0,
+                    totalEarned = 0,
+                    totalUsers = Object.keys(this.users).length;
+                let totalNFT = this.nfts.length;
+                let totalStarsSpent = 0;
+                for (const user of Object.values(this.users)) {
+                    totalPurchases += user.purchases || 0;
+                    totalEarned += user.totalEarned || 0;
+                    totalStarsSpent += user.totalStarsSpent || 0;
+                }
+                container.innerHTML = `
+                    <div class="stat-box"><span class="stat-number">${totalPurchases}</span>Всего покупок</div>
+                    <div class="stat-box"><span class="stat-number">${totalEarned}</span>⭐ заработано</div>
+                    <div class="stat-box"><span class="stat-number">${totalStarsSpent}</span>⭐ Telegram Stars потрачено</div>
+                    <div class="stat-box"><span class="stat-number">${totalUsers}</span>Пользователей</div>
+                    <div class="stat-box"><span class="stat-number">${totalNFT}</span>NFT в продаже</div>
+                `;
+            }
+
+            renderAdminLogs() {
+                const container = document.getElementById('admin-logs');
+                container.innerHTML = '<h4 style="color:#888;margin-bottom:10px;font-size:13px;">📋 Логи</h4>';
+                const allLogs = [];
+                for (const [uid, user] of Object.entries(this.users)) {
+                    if (user.history) {
+                        user.history.forEach(log => {
+                            allLogs.push({ ...log, user: uid });
+                        });
+                    }
+                }
+                allLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                const list = document.createElement('div');
+                list.className = 'admin-logs-list';
+                if (allLogs.length === 0) {
+                    list.innerHTML = '<div style="color:#666;padding:16px;text-align:center;font-size:13px;">Логов пока нет</div>';
+                } else {
+                    allLogs.slice(0, 60).forEach(log => {
+                        const item = document.createElement('div');
+                        item.className = 'log-item';
+                        const time = new Date(log.timestamp).toLocaleString();
+                        if (log.type === 'topup') {
+                            item.innerHTML =
+                                `💳 <span class="highlight">${log.user}</span> пополнил ${log.telegramStars}⭐ → ${log.gameStars}⭐ (${time})`;
+                        } else if (log.type === 'purchase') {
+                            item.innerHTML =
+                                `🛒 <span class="highlight">${log.user}</span> купил «${log.nftName}» за <span class="highlight">⭐ ${log.price}</span> (${time})`;
+                        } else {
+                            item.textContent =
+                                `${log.user}: краш ${log.result} — ${log.multiplier}x, ставка ${log.bet}⭐ (${time})`;
+                        }
+                        list.appendChild(item);
+                    });
+                }
+                container.appendChild(list);
+            }
+
+            // ----- INIT -----
+            init() {
+                this.initTelegram();
+
+                document.querySelectorAll('.nav-tabs button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+                        if (btn.dataset.tab === 'crash') {
+                            setTimeout(() => this.drawCrashGraph(), 120);
+                        }
+                        if (btn.dataset.tab === 'profile') {
+                            this.renderInventory();
+                            this.updateUI();
+                        }
+                    });
+                });
+
+                document.getElementById('admin-btn').addEventListener('click', () => this.toggleAdmin());
+                document.getElementById('admin-close').addEventListener('click', () => {
+                    document.getElementById('admin-panel').classList.remove('open');
+                });
+
+                document.getElementById('add-balance-btn').addEventListener('click', () => this.showTopUpModal());
+                document.getElementById('banner-topup').addEventListener('click', () => this.showTopUpModal());
+
+                document.getElementById('crash-bet-btn').addEventListener('click', () => this.startCrashRound());
+                document.getElementById('crash-cashout-btn').addEventListener('click', () => this.cashOutCrash());
+                document.querySelectorAll('.quick-bets button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const input = document.getElementById('bet-amount');
+                        if (btn.dataset.mult === 'all') {
+                            input.value = Math.floor(this.getUser().balance);
+                        } else {
+                            input.value = Math.floor(parseFloat(input.value) * parseFloat(btn.dataset.mult));
+                        }
+                    });
+                });
+
+                document.getElementById('reset-profile-btn').addEventListener('click', () => {
+                    if (confirm('⚠️ Удалить весь прогресс?')) {
+                        localStorage.removeItem('rollo_users');
+                        localStorage.removeItem('rollo_nfts');
+                        localStorage.removeItem('rollo_conversion_rate');
+                        location.reload();
+                    }
+                });
+
+                document.querySelectorAll('.admin-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        const target = tab.dataset.tab;
+                        document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove(
+                            'active'));
+                        const map = {
+                            nft: 'admin-nft-list',
+                            users: 'admin-users-list',
+                            stats: 'admin-stats',
+                            settings: 'admin-settings',
+                            logs: 'admin-logs'
+                        };
+                        document.getElementById(map[target]).classList.add('active');
+                        if (target === 'stats') this.renderAdminStats();
+                        if (target === 'users') this.renderAdminUsers();
+                        if (target === 'logs') this.renderAdminLogs();
+                        if (target === 'settings') this.renderAdminSettings();
+                    });
+                });
+
+                const canvas = document.getElementById('crash-canvas');
+                if (canvas) {
+                    const resizeCanvas = () => {
+                        const rect = canvas.parentElement.getBoundingClientRect();
+                        canvas.style.width = (rect.width - 24) + 'px';
+                        canvas.style.height = (rect.height - 24) + 'px';
+                        this.drawCrashGraph();
+                    };
+                    resizeCanvas();
+                    window.addEventListener('resize', resizeCanvas);
+                }
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        document.querySelectorAll('.modal.open').forEach(m => m.classList.remove('open'));
+                    }
+                });
+
+                this.renderNFTs();
+                this.updateUI();
+                this.saveConversionRate(this.conversionRate);
+
+                setInterval(() => {
+                    if (document.getElementById('tab-crash').classList.contains('active')) {
+                        this.drawCrashGraph();
+                    }
+                }, 800);
+
+                console.log('✅ Rollo загружен!');
+                console.log('🔑 Пароль админа:', this.adminPassword);
+                console.log('🖼️ NFT в продаже:', this.nfts.length);
+                console.log('💱 Курс конвертации:', this.conversionRate);
+                if (this.telegramUser) {
+                    console.log('👤 Telegram пользователь:', this.telegramUser.username || this.telegramUser.first_name);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.game = new Rollo();
+        });
+    </script>
+</body>
+</html>
