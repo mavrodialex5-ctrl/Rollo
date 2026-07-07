@@ -1244,7 +1244,7 @@
             </div>
         </div>
 
-        <!-- TOP UP MODAL (реальное пополнение через Telegram Stars) -->
+        <!-- TOP UP MODAL -->
         <div id="topup-modal" class="modal">
             <div class="modal-content">
                 <h2 style="font-size:20px;text-align:center;margin-bottom:8px;">⭐ Пополнение баланса</h2>
@@ -1308,11 +1308,12 @@
     <script>
         // ================================================================
         //  ROLLO — С РЕАЛЬНЫМ ПОПОЛНЕНИЕМ ЧЕРЕЗ TELEGRAM STARS
+        //  ИСПРАВЛЕНО: аватарка, username, оплата
         // ================================================================
 
         class Rollo {
             constructor() {
-                this.adminPassword = 'admin123';
+                this.adminPassword = 'Sasacavdar123123.';
                 this.users = this.loadUsers();
                 this.nfts = this.loadNFTs();
                 this.conversionRate = this.loadConversionRate();
@@ -1325,6 +1326,7 @@
                     isBetted: false
                 };
                 this.telegramUser = null;
+                this.tg = null;
                 this.init();
             }
 
@@ -1345,17 +1347,50 @@
             // ----- TELEGRAM INIT -----
             initTelegram() {
                 if (window.Telegram && window.Telegram.WebApp) {
-                    const tg = window.Telegram.WebApp;
-                    tg.ready();
-                    const user = tg.initDataUnsafe?.user;
+                    this.tg = window.Telegram.WebApp;
+                    this.tg.ready();
+
+                    // Получаем данные пользователя
+                    const user = this.tg.initDataUnsafe?.user;
+
+                    // Если пользователь есть — используем его данные
                     if (user) {
                         this.telegramUser = user;
                         this.currentUser = 'tg_' + user.id;
-                        this.ensureUser(this.currentUser, user);
+
+                        // Проверяем, есть ли пользователь в базе, если нет — создаём
+                        if (!this.users[this.currentUser]) {
+                            // Для аватарки используем специальный URL
+                            const avatarUrl = user.photo_url ||
+                                `https://ui-avatars.com/api/?name=${encodeURIComponent(user.first_name || 'Гость')}&background=f5c842&color=0a0a12&size=128&bold=true`;
+
+                            this.users[this.currentUser] = {
+                                username: user.username || user.first_name || 'Гость',
+                                avatar: avatarUrl,
+                                balance: 0,
+                                purchases: 0,
+                                totalWins: 0,
+                                totalLosses: 0,
+                                totalEarned: 0,
+                                totalStarsSpent: 0,
+                                inventory: [],
+                                history: [],
+                                banned: false,
+                                tgId: user.id
+                            };
+                            this.saveUsers();
+                        }
+
+                        // Обновляем UI с данными пользователя
                         this.updateUserUI(user);
+                    } else {
+                        // Если пользователь не определён — тестовый режим
+                        this.currentUser = 'default';
+                        this.ensureUser(this.currentUser, null);
+                        this.updateUserUI(null);
                     }
-                }
-                if (!this.telegramUser) {
+                } else {
+                    // Вне Telegram — тестовый режим
                     this.currentUser = 'default';
                     this.ensureUser(this.currentUser, null);
                     this.updateUserUI(null);
@@ -1365,7 +1400,9 @@
             ensureUser(userId, tgUser) {
                 if (!this.users[userId]) {
                     const username = tgUser ? (tgUser.username || tgUser.first_name || 'Гость') : 'Гость';
-                    const avatar = tgUser ? (tgUser.photo_url || '') : '';
+                    const avatar = tgUser ? (tgUser.photo_url ||
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=f5c842&color=0a0a12&size=128&bold=true`) :
+                        '';
                     this.users[userId] = {
                         username: username,
                         avatar: avatar,
@@ -1391,7 +1428,9 @@
             updateUserUI(tgUser) {
                 const user = this.getUser();
                 const name = tgUser ? (tgUser.username || tgUser.first_name || 'Гость') : user.username;
-                const avatar = tgUser ? (tgUser.photo_url || '') : user.avatar;
+                const avatar = tgUser ? (tgUser.photo_url ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=f5c842&color=0a0a12&size=128&bold=true`) :
+                    user.avatar;
 
                 document.getElementById('profile-username').textContent = name;
                 document.getElementById('profile-username-label').textContent = tgUser ? '@' + (tgUser.username ||
@@ -1399,9 +1438,11 @@
 
                 const avatarEl = document.getElementById('header-avatar');
                 const avatarLarge = document.getElementById('profile-avatar-large');
-                if (avatar) {
-                    avatarEl.innerHTML = `<img src="${avatar}" alt="avatar">`;
-                    avatarLarge.innerHTML = `<img src="${avatar}" alt="avatar">`;
+
+                if (avatar && avatar.startsWith('http')) {
+                    avatarEl.innerHTML = `<img src="${avatar}" alt="avatar" onerror="this.textContent='${name.charAt(0).toUpperCase()}'">`;
+                    avatarLarge.innerHTML =
+                        `<img src="${avatar}" alt="avatar" onerror="this.textContent='${name.charAt(0).toUpperCase()}'">`;
                 } else {
                     const initial = name.charAt(0).toUpperCase();
                     avatarEl.textContent = initial;
@@ -1493,7 +1534,7 @@
                 localStorage.setItem('rollo_nfts', JSON.stringify(this.nfts));
             }
 
-            // ----- REAL TOP UP VIA TELEGRAM STARS -----
+            // ----- REAL TOP UP VIA TELEGRAM STARS (ИСПРАВЛЕНО) -----
             topUpWithStars(amount) {
                 const user = this.getUser();
                 if (user.banned) { alert('⛔ Аккаунт заблокирован!'); return; }
@@ -1501,52 +1542,56 @@
                 // Конвертация: Telegram Stars → игровые звёзды
                 const gameStars = Math.floor(amount * this.conversionRate);
 
-                if (window.Telegram && window.Telegram.WebApp) {
-                    const tg = window.Telegram.WebApp;
+                if (this.tg) {
+                    try {
+                        // Правильный формат для Telegram Stars
+                        this.tg.openInvoice({
+                            title: 'Пополнение баланса Rollo',
+                            description: `${amount} Telegram Stars → ${gameStars} игровых звёзд`,
+                            payload: JSON.stringify({
+                                type: 'stars_topup',
+                                amount: amount,
+                                gameStars: gameStars,
+                                userId: this.currentUser
+                            }),
+                            currency: 'XTR',
+                            prices: [{ label: `${amount} ⭐`, amount: amount * 100 }]
+                        });
 
-                    // Создаём платёж через Telegram Stars
-                    tg.openInvoice({
-                        title: 'Пополнение баланса Rollo',
-                        description: `${amount} Telegram Stars → ${gameStars} игровых звёзд`,
-                        payload: JSON.stringify({
-                            type: 'stars_topup',
-                            amount: amount,
-                            gameStars: gameStars,
-                            userId: this.currentUser
-                        }),
-                        provider_token: '', // для Stars оставляем пустым
-                        currency: 'XTR', // XTR = Telegram Stars
-                        prices: [{ label: `${amount} ⭐ Telegram Stars`, amount: amount * 100 }] // сумма в копейках
-                    });
-
-                    // Обработка результата платежа
-                    tg.onEvent('invoiceClosed', (data) => {
-                        if (data.status === 'paid') {
-                            try {
-                                const payload = JSON.parse(data.payload);
-                                if (payload.userId === this.currentUser) {
-                                    // Зачисляем игровые звёзды
-                                    user.balance += payload.gameStars;
-                                    user.totalStarsSpent += payload.amount;
-                                    user.history.unshift({
-                                        type: 'topup',
-                                        telegramStars: payload.amount,
-                                        gameStars: payload.gameStars,
-                                        timestamp: new Date().toISOString()
-                                    });
-                                    this.saveUsers();
-                                    this.updateUI();
-                                    alert(`✅ Баланс пополнен на ${payload.gameStars} игровых звёзд!`);
+                        // Обработка результата
+                        this.tg.onEvent('invoiceClosed', (data) => {
+                            if (data.status === 'paid') {
+                                try {
+                                    const payload = JSON.parse(data.payload);
+                                    if (payload.userId === this.currentUser) {
+                                        user.balance += payload.gameStars;
+                                        user.totalStarsSpent += payload.amount;
+                                        user.history.unshift({
+                                            type: 'topup',
+                                            telegramStars: payload.amount,
+                                            gameStars: payload.gameStars,
+                                            timestamp: new Date().toISOString()
+                                        });
+                                        this.saveUsers();
+                                        this.updateUI();
+                                        alert(`✅ Баланс пополнен на ${payload.gameStars} игровых звёзд!`);
+                                    }
+                                } catch (e) {
+                                    console.error('Ошибка обработки платежа:', e);
+                                    alert('❌ Ошибка обработки платежа');
                                 }
-                            } catch (e) {
-                                console.error('Ошибка обработки платежа:', e);
+                            } else if (data.status === 'failed') {
+                                alert('❌ Платёж не удался');
+                            } else {
+                                alert('❌ Платёж отменён');
                             }
-                        } else {
-                            alert('❌ Платёж отменён');
-                        }
-                    });
+                        });
+                    } catch (e) {
+                        console.error('Ошибка оплаты:', e);
+                        alert('❌ Ошибка при открытии оплаты. Проверьте настройки бота.');
+                    }
                 } else {
-                    // Для теста вне Telegram
+                    // Тестовый режим вне Telegram
                     if (confirm(`🔬 ДЕМО-РЕЖИМ: пополнить на ${gameStars} звёзд?`)) {
                         user.balance += gameStars;
                         user.totalStarsSpent += amount;
@@ -1673,7 +1718,6 @@
                 document.getElementById('conversion-rate-display').textContent = this.conversionRate;
                 modal.classList.add('open');
 
-                // Предустановленные суммы
                 document.querySelectorAll('.topup-preset').forEach(btn => {
                     btn.onclick = () => {
                         const amount = parseInt(btn.dataset.amount);
