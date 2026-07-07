@@ -1313,7 +1313,7 @@
 
         class Rollo {
             constructor() {
-                this.adminPassword = 'Sasacavdar123123.';
+                this.adminPassword = 'admin123';
                 this.users = this.loadUsers();
                 this.nfts = this.loadNFTs();
                 this.conversionRate = this.loadConversionRate();
@@ -1555,6 +1555,7 @@
                                 userId: this.currentUser
                             }),
                             currency: 'XTR',
+                            provider_token: '',
                             prices: [{ label: `${amount} ⭐`, amount: amount * 100 }]
                         });
 
